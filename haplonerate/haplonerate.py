@@ -125,12 +125,14 @@ def main():
     phase_report = []
     for gene in geneList:
         if gene in gtf_dict:
-            phaseBlock = getLargestPhaseBlock(gtf_dict[gene], len(ref_dict[gene]))
-            phase_report.append("{}\t{}\t{}\t{}\t{}".format(gene,len(gtf_dict[gene]),len(ref_dict[gene]),phaseBlock[0],phaseBlock[1]))
-            if args.edit == 'ref':
-                seqs_to_write += replace_with_ref(haplotype1_dict[gene],haplotype2_dict[gene],ref_dict[gene],phaseBlock)
+            if gene in ref_dict:
+                phaseBlock = getLargestPhaseBlock(gtf_dict[gene], len(ref_dict[gene]))
+                phase_report.append("{}\t{}\t{}\t{}\t{}".format(gene,len(gtf_dict[gene]),len(ref_dict[gene]),phaseBlock[0],phaseBlock[1]))
+                if args.edit == 'ref':
+                    seqs_to_write += replace_with_ref(haplotype1_dict[gene],haplotype2_dict[gene],ref_dict[gene],phaseBlock)
         else:
-            seqs_to_write += [SeqRecord(ref_dict[gene].seq,id=gene,description='')]
+            if gene in ref_dict:
+                seqs_to_write += [SeqRecord(ref_dict[gene].seq,id=gene,description='')]
     SeqIO.write(seqs_to_write,args.output,'fasta')
     if args.block:
         with open(args.block,'w') as outfile:
