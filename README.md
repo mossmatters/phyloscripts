@@ -3,6 +3,10 @@
 Helper scripts for processing and visualization of phylogenetics datasets, mostly written in Python. For more information about each of the scripts, visit the appropriate subdirectory.
 
 
+# [Alleles Workflow](https://github.com/mossmatters/phyloscripts/tree/master/alleles_workflow)
+
+Python and shell scripts for phasing alleles from HybSeq data, *part of Kates et al. AJB in review*.
+
 # [PhypartsPieCharts](https://github.com/mossmatters/phyloscripts/tree/master/phypartspiecharts)
 
 Script for plotting pie charts from bipartition analysis on a species phylogeny.
