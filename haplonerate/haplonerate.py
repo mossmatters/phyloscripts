@@ -99,6 +99,14 @@ def replace_with_ref(seq1,seq2,ref,phaseBlock):
         haplo2 = insertPhase(ref,seq2,phaseBlock,"{}_h2".format(seq2.id))
         return [haplo1,haplo2]
 
+def delete_extra(seq1,seq2,ref,phaseBlock):
+    if seq1.seq == seq2.seq:
+        return [SeqRecord(ref.seq,id=ref.id,description='')]
+    else:
+        haplo1 = SeqRecord(seq1.seq[phaseBlock[0]:phaseBlock[1]],id="{}_h1".format(seq1.id),description='')
+        haplo2 = SeqRecord(seq2.seq[phaseBlock[0]:phaseBlock[1]],id="{}_h2".format(seq2.id),description='')
+        return [haplo1,haplo2]
+
 def main():
     parser = argparse.ArgumentParser(description=helptext,formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("gtf",help="gtf file annotating the positions of phase blocks for each gene")
@@ -115,8 +123,8 @@ def main():
     
     gtf_dict = get_gtf_dict(args.gtf)
     
-    if args.edit == "ref":
-        ref_dict = SeqIO.to_dict(SeqIO.parse(args.reference,'fasta'))
+    #if args.edit == "ref":
+    ref_dict = SeqIO.to_dict(SeqIO.parse(args.reference,'fasta'))
     
     haplotype1_dict = SeqIO.to_dict(SeqIO.parse(args.haplotype_files[0],'fasta'))
     haplotype2_dict = SeqIO.to_dict(SeqIO.parse(args.haplotype_files[1],'fasta'))
@@ -130,6 +138,8 @@ def main():
                 phase_report.append("{}\t{}\t{}\t{}\t{}".format(gene,len(gtf_dict[gene]),len(ref_dict[gene]),phaseBlock[0],phaseBlock[1]))
                 if args.edit == 'ref':
                     seqs_to_write += replace_with_ref(haplotype1_dict[gene],haplotype2_dict[gene],ref_dict[gene],phaseBlock)
+                elif args.edit == "delete":
+                    seqs_to_write += delete_extra(haplotype1_dict[gene],haplotype2_dict[gene],ref_dict[gene],phaseBlock)
         else:
             if gene in ref_dict:
                 seqs_to_write += [SeqRecord(ref_dict[gene].seq,id=gene,description='')]
