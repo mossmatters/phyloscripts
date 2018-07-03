@@ -5,6 +5,7 @@
 #PBS -j oe
 #PBS -o iupac_alignments.out
 
+set -eo pipefail
 
 # Shell script to recreate the IUPAC ambiguity coded alignments for Artocarpus.
 

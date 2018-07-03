@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -eo pipefail
 #Script to prepare phased haplotype sequences for each for one sample. 
 
 prefix=$1
