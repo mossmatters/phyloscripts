@@ -5,7 +5,7 @@ Helper scripts for processing and visualization of phylogenetics datasets, mostl
 
 # [Alleles Workflow](https://github.com/mossmatters/phyloscripts/tree/master/alleles_workflow)
 
-Python and shell scripts for phasing alleles from HybSeq data, *part of Kates et al. AJB in review*.
+Python and shell scripts for phasing alleles from HybSeq data, as done in [Kates et al. AJB 2018](https://www.ncbi.nlm.nih.gov/pubmed/29729187).
 
 # [PhypartsPieCharts](https://github.com/mossmatters/phyloscripts/tree/master/phypartspiecharts)
 
@@ -17,7 +17,7 @@ Display minority bipartitions on a species tree.
 
 # [Haplonerate](https://github.com/mossmatters/phyloscripts/tree/master/haplonerate)
 
-Adjust phased allelic sequences to have phased alleles only in the largest phase block, with ambiguity codes elsewhere.
+Adjust phased allelic sequences to have phased alleles only in the largest phase block, with ambiguity codes elsewhere. Used in [Kates et al. AJB 2018](https://www.ncbi.nlm.nih.gov/pubmed/29729187)
 
 # Branch Length Outlier
 
