@@ -1,106 +1,26 @@
-#
-# Performs homeolog phasing on the Cystopteridaceae Rothfels et al. 2017 dataset.
-#
-# Will Freyman
-#
 
-output_file = "phasing_test/alleles"
-
-# read in data
-alignments = ["alignments/1729.revbayes.nexus",
-               "alignments/1872.revbayes.nexus",
-               "alignments/2150.revbayes.nexus",
-               "alignments/2176.revbayes.nexus"]
 num_loci = alignments.size()
-
+num_swap = label_swap.size()
 for (i in 1:num_loci) {
-    data[i] = readDiscreteCharacterData(alignments[i])
+    data[i] = readDiscreteCharacterData(alignments[i][1])
 }
+
+
 
 # add missing taxa
 for (i in 1:num_loci) {
     for (j in 1:num_loci) {
         data[i].addMissingTaxa(data[j].taxa())
     }
-    # add missing allele
-#    data[i].addMissingTaxa("G_dry_7981a_B")
 }
 num_tips = data[1].ntaxa()
 
 # set initial phase
 for (i in 1:num_loci) {
-    data[i].setHomeologPhase("Physcomitrium-immersum-3176_h1", "Physcomitrium-immersum-3176_h1")
-    data[i].setHomeologPhase("Physcomitrium-immersum-3176_h2", "Physcomitrium-immersum-3176_h2")
-    data[i].setHomeologPhase("Entosthodon-hungaricus-3838_h1", "Entosthodon-hungaricus-3838_h1") 
-    data[i].setHomeologPhase("Entosthodon-hungaricus-3838_h2", "Entosthodon-hungaricus-3838_h2") 
-    data[i].setHomeologPhase("Physcomitrium-pyriforme-3410_h1", "Physcomitrium-pyriforme-3410_h1") 
-    data[i].setHomeologPhase("Physcomitrium-pyriforme-3410_h2", "Physcomitrium-pyriforme-3410_h2") 
-    
+    for (j in 1:num_swap){
+        data[i].setHomeologPhase(label_swap[j][1],label_swap[j][1])
+    }    
 }
-
-# all the homeologs, paralogs, and segregating alleles to set up:
-
-#C_pro_6359_A, 
-#C_pro_6359a_A
-
-#A_tai_6137_A
-#A_tai_6137_B
-
-#A_tenC_8745_A, 
-#A_tenC_8745_B, 
-
-#C_fraA_7009_A, 
-#C_fraA_7009_B, 
-
-#C_fraB_7248_A, 
-#C_fraB_7248_B, 
-
-#C_mon_7943_A, 
-#C_mon_7943_B, 
-
-#C_pelA_6055_A, 
-#C_pelA_6055_B, 
-
-#C_sudB_8674_A, 
-#C_sudB_8674_B, 
-
-#C_tas_6379_A, 
-#C_tas_6379_B, 
-
-#C_tenu_6387_A, 
-#C_tenu_6387_B, 
-
-#C_uta_6848_A, 
-#C_uta_6848_B, 
-
-#G_con_6979_A, 
-#G_con_6979_B, 
-
-#G_oyaC_8739_A, 
-#G_oyaC_8739_B, 
-
-#G_rem_4862_A, 
-#G_rem_4862_B, 
-
-#G_rob_7945_A, 
-#G_rob_7945_B, 
-
-#xCystC_7974_A, 
-#xCystC_7974_B, 
-#xCystG_7974_A, 
-#xCystG_7974_B, 
-
-#A_tenB_8704_A, 
-#A_tenB_8704_B, 
-
-#C_dia_6380_A, 
-#C_dia_6380_B, 
-
-#G_dry_7981_A, 
-#G_dry_7981_B, 
-#G_dry_7981a_A, 
-#G_dry_7981a_B
-
 
 mvi = 0
 
@@ -133,13 +53,10 @@ for (i in 1:num_loci) {
 
 w = 1/3
 for (i in 1:num_loci) {
-
     # switch phasing proposals
-    moves[++mvi] = mvHomeologPhase(ctmc[i], "Physcomitrium-immersum-3176_h1", "Physcomitrium-immersum-3176_h2", weight=w)
-    moves[++mvi] = mvHomeologPhase(ctmc[i], "Entosthodon-hungaricus-3838_h1", "Entosthodon-hungaricus-3838_h2", weight=w)
-    moves[++mvi] = mvHomeologPhase(ctmc[i], "Physcomitrium-pyriforme-3410_h1", "Physcomitrium-pyriforme-3410_h2", weight=w)
-    
-
+    for (j in 1:num_swap){
+    moves[++mvi] = mvHomeologPhase(ctmc[i],label_swap[j][1],label_swap[j][2],weight=w)
+    }
 }
 
 mymodel = model(Q)
@@ -147,11 +64,9 @@ mymodel = model(Q)
 monitors[1] = mnModel(filename=output_file + ".log", printgen=1)
 monitors[2] = mnFile(filename=output_file + ".trees", printgen=1, tree)
 monitors[3] = mnScreen(printgen=1)
-monitors[4] = mnHomeologPhase(filename=output_file + "_phase1.log", printgen=1, ctmc[1])
-monitors[5] = mnHomeologPhase(filename=output_file + "_phase2.log", printgen=1, ctmc[2])
-monitors[6] = mnHomeologPhase(filename=output_file + "_phase3.log", printgen=1, ctmc[3])
-monitors[7] = mnHomeologPhase(filename=output_file + "_phase4.log", printgen=1, ctmc[4])
-
+for (i in 1:num_loci){
+    monitors[i+3] = mnHomeologPhase(filename=output_file + "_" + alignments[i][1] + "_phase.log", printgen=1, ctmc[i])
+}
 mymcmc = mcmc(mymodel, monitors, moves)
 mymcmc.run(generations=5000)
     

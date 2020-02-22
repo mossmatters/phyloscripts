@@ -6,7 +6,7 @@ Uses the setHomeologPhase function in [RevBayes](revbayes.github.io) to adjust t
 
 Gene alignments that include samples that have two homeolog sequences. 
 The sequences within each gene should be phased. 
-For target capture data, see the `alleles_workflow` and `haplonerate` methods in this same [Phyloscripts](https://github.com/mossmatters/phyloscripts) repository for tips on generating phased haplotypes within a gene sequence. The gene alignments can be in FASTA or NEXUS format.
+For target capture data, see the `alleles_workflow` and `haplonerate` methods in this same [Phyloscripts](https://github.com/mossmatters/phyloscripts) repository for tips on generating phased haplotypes within a gene sequence. The gene alignments can be in FASTA or NEXUS format, but must end with a regular suffix. For example, all fasta files must end with `.fasta` or `.fa`. Place all of the alignment files in a directory. **Do not place any other files in that directory**.
 
 Users must also prepare a text file containing the naming scheme for sequences. For example:
 
