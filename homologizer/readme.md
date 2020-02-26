@@ -19,21 +19,30 @@ These labels will be used during the RevBayes script to swap labels for the poly
 **In this version, only two sequences per individual are supported**
 
 ### Step 1: Making RevBayes scripts
-    Given a set of gene alignments, we will need to prepare RevBayes files that have the appropriate alleles to switch
-    Not every sample will be present in every gene so need to account for missing labels when running RevBayes
-    Need to convert FASTA to NEXUS as before.
+
+Given a set of gene alignments, we will need to prepare RevBayes files that have the appropriate alleles to switch. The paired labels are taken from the label swap file, and is added to a basic template for RevBayes (taken from Will Freyman's version).
+
+**For now, only genes with no missing labels are accepted**
+
+For ease of analysis, all the genes are split up into chunks of genes (by default, max 25 genes). This means that for 250 loci, there will be 10 RevBayes scripts generated.
+
+Sequences are converted NEXUS for RevBayes.
 
 ### Step 2: Run RevBayes on sets of genes
-    The release version for Linux uses a Singularity image - get this working on Quanah
-    Write a QSUB script to distribute the RevBayes jobs in an array
+   
+Issues:
+
+- MPIrun version of RevBayes crashes, probably a memory error
+- Single-thread version of RevBayes grabs all RAM on the machine (256 GB on one machine!)
 
 ### Step 3: Summarize RevBayes output
-    The script should incorporate the bayesian posterior probability of the label IDs for each gene
-        I am thinking of genes where the two E. hungaricus alleles are actually sister to each other (probably gene duplication since polyploidy event).
-    Do we just kick out genes where not everything has a 100% PP for label switching?
-        Or do we just cut out the taxon?
-        Should summarize this so we know how many genes have “clear” label switching for each allopolyploid sample
 
-### Step 4: Change labels in RAXML collapsed gene trees
 
-### Step 5: Run ASTRAL using gene trees with phased labels
+The script `swap_labels.py` reads the RevBayes log files and calculates the posterior probability of label swapping. A threshold can be picked (set to 95% by default), if the swapping PP is below this, both sequences are deleted from that sample. The output 
+
+# TODO:
+
+- Incorporate a burnin to the `swap_labels.py` script
+- Get RevBayes running more efficiently
+- Accomodate missing labels
+- How to summarize across different chunks of genes. Each chunk will be homologized, but no guarantee of this across chunks.
