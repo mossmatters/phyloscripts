@@ -51,7 +51,7 @@ for (i in 1:num_loci) {
     ctmc[i].clamp(data[i])
 }
 
-w = 1/3
+w = 1/8
 for (i in 1:num_loci) {
     # switch phasing proposals
     for (j in 1:num_swap){
@@ -61,14 +61,14 @@ for (i in 1:num_loci) {
 
 mymodel = model(Q)
 
-monitors[1] = mnModel(filename=output_file + ".log", printgen=1)
-monitors[2] = mnFile(filename=output_file + ".trees", printgen=1, tree)
-monitors[3] = mnScreen(printgen=1)
+monitors[1] = mnModel(filename=output_file + ".log", printgen=10)
+monitors[2] = mnFile(filename=output_file + ".trees", printgen=10, tree)
+monitors[3] = mnScreen(printgen=10)
 for (i in 1:num_loci){
-    monitors[i+3] = mnHomeologPhase(filename=output_file + "_" + alignments[i][1] + "_phase.log", printgen=1, ctmc[i])
+    monitors[i+3] = mnHomeologPhase(filename=output_file + "_" + alignments[i][1] + "_phase.log", printgen=10, ctmc[i])
 }
 mymcmc = mcmc(mymodel, monitors, moves)
-mymcmc.run(generations=5000)
+mymcmc.run(generations=30000)
     
 treetrace = readTreeTrace(output_file + ".trees", treetype="clock", burnin=0.25)
 map_tree = mapTree(treetrace, output_file + ".tree")
