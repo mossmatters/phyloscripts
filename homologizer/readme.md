@@ -1,6 +1,8 @@
 # Homologizer
 
-Uses the setHomeologPhase function in [RevBayes](revbayes.github.io) to adjust the labels in datasets that contain homeologs. Once adjusted, the data from many genes can be analyzed together, for example using a concatenated supermatrix or summary species tree analysis. 
+> "It's too late to homologize..." -Not One Republic
+
+It's not too late! Using the setHomeologPhase function in [RevBayes](revbayes.github.io), gene alignments with pairs of sequences can be adjusted so that labels across genes are homologized. Once adjusted, the data from many genes can be analyzed together, for example using a concatenated supermatrix or summary species tree analysis. 
 
 ### Step 0: Input files
 
@@ -8,15 +10,17 @@ Gene alignments that include samples that have two homeolog sequences.
 The sequences within each gene should be phased. 
 For target capture data, see the `alleles_workflow` and `haplonerate` methods in this same [Phyloscripts](https://github.com/mossmatters/phyloscripts) repository for tips on generating phased haplotypes within a gene sequence. The gene alignments can be in FASTA or NEXUS format, but must end with a regular suffix. For example, all fasta files must end with `.fasta` or `.fa`. Place all of the alignment files in a directory. **Do not place any other files in that directory**.
 
-Users must also prepare a text file containing the naming scheme for sequences. For example:
+Users must also prepare a text file containing the naming scheme for sequences, separated by commas. For example:
 
-	Entosthodon-hungaricus-3838_h1	Entosthodon-hungaricus-3838-h2
-	Physcomitrium-immersum-3176_h1	Physcomitrium-immersum-3176_h2
-	Physcomitrium-pyriforme-3410_h1	Physcomitrium-pyriforme-3410_h2
+	Entosthodon-hungaricus-3838_h1,Entosthodon-hungaricus-3838-h2
+	Physcomitrium-immersum-3176_h1,Physcomitrium-immersum-3176_h2
+	Physcomitrium-pyriforme-3410_h1,Physcomitrium-pyriforme-3410_h2
 
 These labels will be used during the RevBayes script to swap labels for the polyploid individuals.
 
 **In this version, only two sequences per individual are supported**
+
+This repository also contains `revbayes_template.txt` which is adapted from Will Freyman's [repository](https://github.com/wf8/homeolog_phasing). This file contains all the options for running RevBayes MCMC using the combined alignment. Adjust the parameters as needed (for example, number of generations or substitution model).
 
 ### Step 1: Making RevBayes scripts
 
@@ -42,7 +46,6 @@ The script `swap_labels.py` reads the RevBayes log files and calculates the post
 
 # TODO:
 
-- Incorporate a burnin to the `swap_labels.py` script
 - Get RevBayes running more efficiently
 - Accomodate missing labels
 - How to summarize across different chunks of genes. Each chunk will be homologized, but no guarantee of this across chunks.

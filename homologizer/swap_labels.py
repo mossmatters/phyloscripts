@@ -46,9 +46,10 @@ for gene in genelist:
     logfilepath = "alleles.{}_{}_phase.log".format(subset_num,gene)
     gene_logfile = pd.read_csv(logfilepath,header=0,index_col=0,sep="\t") 
     dim_logfile = gene_logfile.shape
+    burnin = int(dim_logfile[0]/args.burnin)
     gene_swap_dict = {}
     for h in range(dim_logfile[1]):
-        pp = gene_logfile.iloc[:,h].value_counts()/dim_logfile[0] * 100
+        pp = gene_logfile.iloc[burnin:,h].value_counts()/dim_logfile[0] * 100
         if pp[0] <  args.swappct:
             #None will indicate the sequence should be skipped when re-writing
             gene_swap_dict[pp.name] = None
