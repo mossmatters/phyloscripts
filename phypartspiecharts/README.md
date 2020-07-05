@@ -43,6 +43,16 @@ Numbers above and below the branch also indicate the number of concordant and co
 * `--colors` Provide custom colors for the pie chart wedges. RGB triplets (comma-separated), hexadecimal, and named colors can be used and should be separated by a space. The colors will correspond to the same order as above.
 * `--to_csv` Generates CSV files for the categories and nodes, for input into ggTree in R (code provided by Ben Cooper).
 
+**Run with Example Data**
+
+Data from [Medina et al. JSE 2019](https://onlinelibrary.wiley.com/doi/full/10.1111/jse.12516)
+
+```
+cd phyparts_example
+python ../phypartspiecharts.py species.tre out 648
+```
+
+
 
 
 
