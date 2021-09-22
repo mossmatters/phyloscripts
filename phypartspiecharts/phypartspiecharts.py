@@ -155,7 +155,7 @@ concord_dict, conflict_dict = get_concord_and_conflict(args.phyparts_root,subtre
 phyparts_dist, phyparts_pies = get_pie_chart_data(args.phyparts_root,args.num_genes,concord_dict,conflict_dict)
 
 if args.taxon_subst:
-	taxon_subst = {line.split(",")[0]:line.split(",")[1] for line in open(args.taxon_subst,'U')}
+	taxon_subst = {line.split(",")[0]:line.rstrip().split(",")[1] for line in open(args.taxon_subst,'U')}
 	for leaf in plot_tree.get_leaves():
 		try:
 			leaf.name = taxon_subst[leaf.name]
