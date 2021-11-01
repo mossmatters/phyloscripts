@@ -52,7 +52,25 @@ cd phyparts_example
 python ../phypartspiecharts.py species.tre out 648
 ```
 
+### Reroot Script
 
+Also includes a script for rerooting gene and species trees. Requires ETE3.
+
+Usage:
+
+`python reroot_trees.py my.tree outgroup.list > rerooted.tre`
+
+Where `outgroup.list` is a text file containing a list of outgroup names found on the tree (one per line). Script will attempt to find the LCA of the outgroup names, set that LCA as the root branch, and print the rooted tree. 
+
+To run on a set of unrooted gene trees with GNU `parallel`: Assuming each gene is in the format `geneName.tre` and there is a list of `geneName` in a file called `genelist.txt`:
+
+`parallel "python reroot_trees.py {}.tre outgroup.list > {}.rerooted.tre" :::: genelist.txt`
+
+**Warning**: If no branch can be found, the tree file will be empty! You can remove empty tree files with:
+
+`find . -size 0 -delete`
+
+Remember to re-root the species tree as well before running PhyParts.
 
 
 
