@@ -41,7 +41,7 @@ Numbers above and below the branch also indicate the number of concordant and co
 * `--show_nodes` Display a tree with nodes labeled by the Phyparts numbering scheme. Useful for further inspection of alternative bipartitions (i.e. `minority_report.py`). The tree is opened in a new window, so this may not work for remote logins (use `ssh -Y`). 
 * `--taxon_subst` Provide a comma delimited file that replaces tip labels in `species.tre` with a new label. Useful for converting accession numbers to species names, for example.
 * `--colors` Provide custom colors for the pie chart wedges. RGB triplets (comma-separated), hexadecimal, and named colors can be used and should be separated by a space. The colors will correspond to the same order as above.
-* `--to_csv` Generates CSV files for the categories and nodes, for input into ggTree in R (code provided by Ben Cooper).
+* `--to_csv` Generates CSV files for the categories and nodes, for input into ggTree in R (code provided by [Ben Cooper](https://github.com/benjamin-j-cooper)).
 
 **Run with Example Data**
 
