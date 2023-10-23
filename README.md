@@ -11,6 +11,11 @@ Python and shell scripts for phasing alleles from HybSeq data, as done in [Kates
 
 Script for plotting pie charts from bipartition analysis on a species phylogeny.
 
+
+# [HybpiperUtils](https://github.com/mossmatters/phyloscripts/tree/master/hybpiperutils)
+
+Scripts for working with target capture data recovered or assembled using [HybPiper](github.com/mossmatters/hybpiper), including `fasta_merge.py` from version 1.3.1.
+
 # [Minority Report](https://github.com/mossmatters/phyloscripts/tree/master/minorityreport)
 
 Display minority bipartitions on a species tree.
