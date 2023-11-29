@@ -11,7 +11,7 @@ filtering based on individual genes and the
 1. Run hybpiper stats to generate the stats.tsv and lengths.tsv files
 2. Run hybpiper retrieve_sequences to create a folder of FASTA sequences
 3. Run this script to create new FASTA files based on the per-gene filters. 
-    Also makes a text file summarizing the denylist by gene.
+    Also writes to standard output the denylist by gene, redirect this to save to a file.
     
 The FASTA sequences will expect to have the naming scheme of HybPiper:
     geneName.FNA for nucleotide exon files
@@ -24,7 +24,47 @@ If you wish to filter intron or supercontig sequences, run again with the --deny
     to skip the filtering based on lengths.
 '''
 
+def filter_fastas(deny_dict,extension):
+    fastafiles = [x for x in os.listdir() if x.endswith(extension)]
+    for f in fastafiles:
+        geneName = f.split(".")[0]
+        genedenylist = set(deny_dict[geneName])
+        newFn = f"{geneName}.filtered.{extension}"
+        with open(newFn,'w') as outfile:
+            for seq in SeqIO.parse(f,'fasta'):
+                if seq.id in genedenylist:
+                    continue
+                else:
+                    SeqIO.write(seq,outfile,'fasta')
+    return
 
+def write_denylist(deny_dict):
+    #with open(denylistfn,'w') as outfile:
+    for gene in deny_dict:
+        samples = ",".join(deny_dict[gene])
+        sys.stdout.write(f"{gene}\t{samples}\n")
+    return
+
+def filter_seqs(gene_lengths,minLength,minPercent):
+    '''Takes the sample-gene lengths and filters and returns a dictionary by gene of samples to be on the denylist'''
+    
+    deny_dict = {}
+    total_deny = 0
+    for gene in gene_lengths:
+        deny_dict[gene] = []
+        percentThresh = gene_lengths[gene]["mean_length"] * minPercent
+        #print(gene,percentThresh)
+        for sampleName in gene_lengths[gene]["sample_lengths"]:
+            sampleLength = gene_lengths[gene]["sample_lengths"][sampleName]
+            if sampleLength < minLength:
+                deny_dict[gene].append(sampleName)
+                total_deny += 1
+                continue
+            if sampleLength < percentThresh:
+                deny_dict[gene].append(sampleName)
+                total_deny += 1
+    sys.stderr.write(f"Found {total_deny} total samples at {len(deny_dict)} genes based on filters.")
+    return deny_dict
 
 def parse_seqlens(seqlens_fn):
     '''Takes the file name for the seqlengths output of hybpiper stats and returns:
@@ -32,7 +72,7 @@ def parse_seqlens(seqlens_fn):
     - a dictionary for each gene containing:
         * the name of the gene as the dict key
         * "mean length":integer
-        * "sample_lengths":[a list of sample lengths in same order as sample names list]'''
+        * "sample_lengths":{a dictionary of key:sample_lengths}'''
     
     sample_names = []
     gene_lengths = {}
@@ -41,13 +81,13 @@ def parse_seqlens(seqlens_fn):
     genenames = seqlens.readline().rstrip().split("\t")[1:]
     meanlens = seqlens.readline().rstrip().split("\t")[1:]
     for geneNum in range(len(genenames)):
-        gene_lengths[genenames[geneNum]] = {"mean_length":float(meanlens[geneNum]),"sample_lengths":[]}
+        gene_lengths[genenames[geneNum]] = {"mean_length":float(meanlens[geneNum]),"sample_lengths":{}}
     for line in seqlens:
         line = line.rstrip().split("\t")
         sampleName = line.pop(0)
         sample_names.append(sampleName)
         for geneNum in range(len(genenames)):
-            gene_lengths[genenames[geneNum]]["sample_lengths"].append(float(line[geneNum]))
+            gene_lengths[genenames[geneNum]]["sample_lengths"][sampleName] = float(line[geneNum])
     
     return sample_names,gene_lengths
 
@@ -61,7 +101,7 @@ def parse_denylist(denylist_fn):
         samples = line[1].split(",")
         total_deny += len(samples)
         deny_dict[line[0]] = samples
-    sys.stderr.write(f"Found {len(samples)} total samples at {len(deny_dict)} genes in the denylist {denylist_fn}")
+    sys.stderr.write(f"Found {total_deny} total samples at {len(deny_dict)} genes in the denylist {denylist_fn}")
     return deny_dict
 
 
@@ -80,11 +120,13 @@ def main():
     args = parser.parse_args()
     
     if args.denylist:
-        deny_dict = parse_denylist(denylist_fn)
+        deny_dict = parse_denylist(args.denylist)
     else:
         sample_names,gene_lengths = parse_seqlens(args.lengthfile)
-        print(gene_lengths)
-    
+        deny_dict = filter_seqs(gene_lengths,args.length_filter,args.percent_filter)
+        write_denylist(deny_dict)
+        
+    filter_fastas(deny_dict,args.extension)
     
 
 if __name__ == "__main__":main()
