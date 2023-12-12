@@ -49,13 +49,19 @@ Suggested Workflow:
     
 The FASTA sequences will expect to have the naming scheme of HybPiper:
 
--    geneName.FNA for nucleotide exon files
--    geneName.FAA for amino acid files
+-    `geneName.FNA` for nucleotide exon files
+-    `geneName.FAA` for amino acid files
+-    `geneName_supercontig.fasta` for supercontig files
+-    `geneName_intron.fasta` for intron-only files
     
 The geneNames will be taken from either the `hybpiper stats` file (`--lengthfile`) or a supplied list of gene sample combinations (`--denylist`, also produced by running this script). There are two filters, `--length_filter` for the minimum length to accept a sequence (for all genes) and `--percent_filter` for a fraction of the mean length determined from the `seq_lengths.tsv` file for each gene. For example:
 
 ```
-python filter_by_length.py --lengthfile ../seq_lengths.tsv --extension FNA --percent_filter 0.1 > denylist.txt  
+python filter_by_length.py --lengthfile ../seq_lengths.tsv --seq_type FNA --percent_filter 0.1 > denylist.txt  
 ```
     
-If you wish to filter intron or supercontig sequences, run a second time with the --denylist flag to skip the filtering based on lengths.
+If you wish to filter intron or supercontig sequences, run a second time with the `--denylist` flag to skip the filtering based on lengths or percentages:
+
+```
+python filter_by_length.py --lengthfile ../seq_lengths.tsv --seq_type supercontig --denylist ../denylist.txt 
+```
