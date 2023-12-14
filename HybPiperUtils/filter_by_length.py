@@ -110,7 +110,10 @@ def parse_denylist(denylist_fn):
     total_deny = 0
     for line in open(denylist_fn):
         line = line.rstrip().split("\t")
-        samples = line[1].split(",")
+        try:
+            samples = line[1].split(",")
+        except IndexError:
+            samples = []
         total_deny += len(samples)
         deny_dict[line[0]] = samples
     sys.stderr.write(f"Found {total_deny} total samples at {len(deny_dict)} genes in the denylist {denylist_fn}")
