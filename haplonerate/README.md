@@ -54,6 +54,12 @@ If `--edit ref` is used, the reference sequence must be supplied with `--referen
 
 `haplonerate.py whatshap.gtf haplotype_h1.fasta haplotype_h2.fasta --reference ambiguity_ref.fasta`
 
+### Triploid Data
+
+Use the `haplonerate3N.py` script instead:
+
+`haplonerate.py whatshap.gtf haplotype_h1.fasta haplotype_h2.fasta haplotype_h3.fasta --reference ambiguity_ref.fasta --edit delete`
+
 
 
 
